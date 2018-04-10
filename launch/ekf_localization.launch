@@ -1,18 +1,33 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="scan_topic" default="scan" />
-  <arg name="rosbag_file_1" default="homework1/dataset/dataset_2013-10-09-15-10-03.bag" />
-  <arg name="map_file" default="$(find advanced_robotics)/homework1/maps/gmapping/map" />
 
-  <param name="use_sim_time" value="true" />
+    <!-- select a dataset (rosbag) -->
+    <arg name="rosbag_file" default="$(find cobot_2dnav)/ros/data/dataset_2013-10-09-15-10-03.bag" />
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ekf_localization)/rviz/ekf_localization.rviz" />
+    <!-- control the frequency at which the bag will run -->
+    <arg name="rosbag_rate" default="1.0" />
 
-  <node name="ekf_localization_node" pkg="ekf_localization" type="ekf_localization_node" output="screen" args="$(arg map_file).pgm">
-    <rosparam file="$(find ekf_localization)/config/parameters.yaml" command="load" />
-  </node>
-  <node name="map_server" pkg="map_server" type="map_server"  args="$(arg map_file).yaml" />
-  <node pkg="rosbag" type="play" name="player" output="log" args="--clock $(find advanced_robotics)/$(arg rosbag_file_1)" />
-  <node pkg="tf" type="static_transform_publisher" name="base_to_laser_frame" args="0.15 0 0 0 0 0  /base_link /laser_frame 50" />
+    <!-- playback the rosbag starting at this time (in secs) -->
+    <arg name="rosbag_start_time" default="0.0" />
+
+    <!-- select a map -->
+    <arg name="map_file" default="$(find cobot_2dnav)/ros/maps/hospital-1" />
+
+    <!-- tell tf to use simulated clock -->
+    <param name="use_sim_time" value="true" />
+
+    <!-- to publish the map into ROS -->
+    <node name="map_server" pkg="map_server" type="map_server"  args="$(arg map_file).yaml" />
+
+    <!-- playback the dataset using rosbag -->
+    <node pkg="rosbag" type="play" name="player" output="log" args="-r $(arg rosbag_rate) -s $(arg rosbag_start_time) --clock $(arg rosbag_file)" />
+
+    <!-- publish missing transform between base_link and laser frame -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_laser_frame" args="0.15 0 0 0 0 0  /base_link /laser_frame" />
+
+    <!-- run ekf localization node -->
+    <node name="ekf_localization_node" pkg="ekf_localization" type="ekf_localization_node" output="screen" args="$(arg map_file).pgm">
+        <rosparam file="$(find ekf_localization)/config/parameters.yaml" command="load" />
+    </node>
 
 </launch>
