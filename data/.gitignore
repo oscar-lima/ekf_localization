@@ -1,0 +1,2 @@
+# ignore all rosbags, get them from the internet instead using bash script
+*.bag

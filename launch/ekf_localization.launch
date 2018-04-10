@@ -2,7 +2,7 @@
 <launch>
 
     <!-- select a dataset (rosbag) -->
-    <arg name="rosbag_file" default="$(find cobot_2dnav)/ros/data/dataset_2013-10-09-15-10-03.bag" />
+    <arg name="rosbag_file" default="$(find ekf_localization)/data/dataset_2013-10-09-15-10-03.bag" />
 
     <!-- control the frequency at which the bag will run -->
     <arg name="rosbag_rate" default="1.0" />
@@ -11,7 +11,7 @@
     <arg name="rosbag_start_time" default="0.0" />
 
     <!-- select a map -->
-    <arg name="map_file" default="$(find cobot_2dnav)/ros/maps/hospital-1" />
+    <arg name="map_file" default="$(find ekf_localization)/maps/hospital-1" />
 
     <!-- tell tf to use simulated clock -->
     <param name="use_sim_time" value="true" />
