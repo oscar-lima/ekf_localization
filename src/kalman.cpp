@@ -3,7 +3,7 @@
 EKFnode::EKFnode(const ros::NodeHandle& nh, const double & spin_rate, const double & voxel_grid_size_) :
     nh_(nh),
     nh_priv("~"),
-    listener(new tf::TransformListener(ros::Duration(10.0))),
+    listener(new tf::TransformListener(ros::Duration(100.0))),
     map_(new pcl::PointCloud<point_type>()),
     laser(new pcl::PointCloud<point_type>()),
     voxel_grid_size(voxel_grid_size_),
@@ -341,14 +341,14 @@ bool EKFnode::predict()
     // Get odom delta motion in cartesian coordinates with TF
     try
     {
-        listener->waitForTransform(base_link, odom_last_stamp_, base_link, odom_time , odom_link, ros::Duration(0.5) );
+        listener->waitForTransform(base_link, odom_last_stamp_, base_link, odom_time , odom_link, ros::Duration(0.1) );
         listener->lookupTransform(base_link, odom_last_stamp_, base_link, odom_time, odom_link, baseDeltaTf); // delta position
 
     }
     catch (tf::TransformException &ex)
     {
         //odom_initialized_=false;
-
+        odom_last_stamp_ = odom_time;
         ROS_WARN("%s",ex.what());
         return false;
     }

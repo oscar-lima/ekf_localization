@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     priv_node.param("spin",spin_rate, 20.0);
 
-    EKFnode k(node,spin_rate);
+    EKFnode k(node,spin_rate, 0.00025);
 
     ros::spin();
 
